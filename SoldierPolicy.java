@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package team_mq;
+package bcode2014;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
@@ -12,13 +12,13 @@ import battlecode.common.Robot;
 import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
-import static team_mq.RobotPlayer.rand;
+import static bcode2014.RobotPlayer.rand;
 
 /**
  *
  * @author ubuntu
  */
-public class CowSoldierPolicy
+public class SoldierPolicy
 {
 
     public static void run(RobotController rc) throws GameActionException

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package team_mq;
+package bcode2014;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
