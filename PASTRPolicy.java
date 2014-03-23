@@ -9,6 +9,7 @@ import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
+import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 import static bcode2014.RobotPlayer.rand;
 
@@ -16,73 +17,78 @@ import static bcode2014.RobotPlayer.rand;
  *
  * @author ubuntu
  */
-public class PASTRPolicy
+public
+        class PASTRPolicy
 {
 
-    public static void run(RobotController rc) throws GameActionException
+    public static
+            void run(RobotController rc) throws GameActionException
     {
-        Direction[] directions =
-        {
-            Direction.NORTH, Direction.NORTH_EAST, Direction.EAST, Direction.SOUTH_EAST, Direction.SOUTH, Direction.SOUTH_WEST, Direction.WEST, Direction.NORTH_WEST
-        };
-
         if (rc.isActive())
         {
             double[][] cowsGrowth = rc.senseCowGrowth();
             double currMax = 0;
             MapLocation target = new MapLocation(0, 0);
+            RobotInfo targetToAttack = OffensiveMethods.findTarget(rc, 10);
 
-            int rows = rc.getMapWidth();
-            int col = rc.getMapHeight();
-            for (int i = 0; i < rows; ++i)
+            if (targetToAttack == null) // no target to attack, move
             {
-                for (int j = 0; j < col; ++j)
+                int rows = rc.getMapWidth();
+                int col = rc.getMapHeight();
+                for (int i = 0; i < rows; ++i)
                 {
-                    if (currMax < cowsGrowth[i][j])
+                    for (int j = 0; j < col; ++j)
                     {
-                        currMax = cowsGrowth[i][j];
-                        target = new MapLocation(i, j);
+                        if (currMax < cowsGrowth[i][j])
+                        {
+                            currMax = cowsGrowth[i][j];
+                            target = new MapLocation(i, j);
+                        }
                     }
                 }
-            }
 
-            MapLocation myLocation = rc.getLocation();
-            Direction toCows = myLocation.directionTo(target);
-            int distance = myLocation.distanceSquaredTo(target);
+                MapLocation myLocation = rc.getLocation();
+                Direction toCows = myLocation.directionTo(target);
+                int distance = myLocation.distanceSquaredTo(target);
 
-            if (distance > 20)
-            {
-                if (rc.canMove(toCows))
+                if (distance > 20)
                 {
-                    rc.move(toCows);
+                    if (rc.canMove(toCows))
+                    {
+                        rc.move(toCows);
+                    }
+                    else
+                    {
+                        Direction moveDirection = GameGlobals.directions[rand.nextInt(8)];
+                        if (rc.canMove(moveDirection))
+                        {
+                            rc.move(moveDirection);
+                        }
+                    }
+                }
+                else if (distance > 10)
+                {
+                    if (rc.canMove(toCows))
+                    {
+                        rc.sneak(toCows);
+                    }
+                    else
+                    {
+                        Direction moveDirection = GameGlobals.directions[rand.nextInt(8)];
+                        if (rc.canMove(moveDirection))
+                        {
+                            rc.sneak(moveDirection);
+                        }
+                    }
                 }
                 else
                 {
-                    Direction moveDirection = directions[rand.nextInt(8)];
-                    if (rc.canMove(moveDirection))
-                    {
-                        rc.move(moveDirection);
-                    }
+                    rc.construct(RobotType.PASTR);
                 }
             }
-            else if (distance > 10)
+            else // attack
             {
-                if (rc.canMove(toCows))
-                {
-                    rc.sneak(toCows);
-                }
-                else
-                {
-                    Direction moveDirection = directions[rand.nextInt(8)];
-                    if (rc.canMove(moveDirection))
-                    {
-                        rc.sneak(moveDirection);
-                    }
-                }
-            }
-            else
-            {
-                rc.construct(RobotType.PASTR);
+                rc.attackSquare(targetToAttack.location);
             }
         }
     }

@@ -5,12 +5,10 @@
  */
 package bcode2014;
 
-import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.Robot;
 import battlecode.common.RobotController;
-import battlecode.common.RobotInfo;
-import static bcode2014.RobotPlayer.rand;
+
 
 /**
  *

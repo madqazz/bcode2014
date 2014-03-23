@@ -23,34 +23,11 @@ public class SoldierPolicy
 
     public static void run(RobotController rc) throws GameActionException
     {
-        Direction[] directions =
-        {
-            Direction.NORTH, Direction.NORTH_EAST, Direction.EAST, Direction.SOUTH_EAST, Direction.SOUTH, Direction.SOUTH_WEST, Direction.WEST, Direction.NORTH_WEST
-        };
-
         if (rc.isActive())
         {
-            Robot[] nearbyEnemies = rc.senseNearbyGameObjects(Robot.class, 10, rc.getTeam().opponent());
             Robot[] allEnemies = rc.senseNearbyGameObjects(Robot.class, 35, rc.getTeam().opponent());
             Direction toEnemyHQ = rc.getLocation().directionTo(rc.senseEnemyHQLocation());
-            double minHealth = 300;
-            RobotInfo targetToAttack = null;
-
-            if (nearbyEnemies.length > 0)
-            {
-                for (Robot robot : nearbyEnemies)
-                {
-                    RobotInfo info = rc.senseRobotInfo(robot);
-                    if (info.type != RobotType.HQ)
-                    {
-                        if (minHealth > info.health)
-                        {
-                            minHealth = info.health;
-                            targetToAttack = info;
-                        }
-                    }
-                }
-            }
+            RobotInfo targetToAttack = OffensiveMethods.findTarget(rc, 10);
 
             if (targetToAttack == null) // no target to attack, move
             {
@@ -79,7 +56,7 @@ public class SoldierPolicy
                     }
                     else
                     {
-                        Direction moveDirection = directions[rand.nextInt(8)];
+                        Direction moveDirection = GameGlobals.directions[rand.nextInt(8)];
                         if (rc.canMove(moveDirection))
                         {
                             rc.move(moveDirection);
@@ -95,7 +72,7 @@ public class SoldierPolicy
                     }
                     else
                     {
-                        Direction moveDirection = directions[rand.nextInt(8)];
+                        Direction moveDirection = GameGlobals.directions[rand.nextInt(8)];
                         if (rc.canMove(moveDirection))
                         {
                             rc.move(moveDirection);
